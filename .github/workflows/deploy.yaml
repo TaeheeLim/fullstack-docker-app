@@ -1,0 +1,27 @@
+jobs:
+  build:
+    runs-on:  ubuntu-latest
+    steps:
+      - uses: actions/chekcout@v3
+      - run: docker build -t sjsj1123/docker-frontend ./frontend
+      - run: docker build -t sjsj1123/docker-nginx ./nginx
+      - run: docker build -t sjsj1123/docker-backend ./backend
+
+      - run: docker push sjsj1123/docker-frontend
+      - run: docker push sjsj1123/docker-nginx
+      - run: docker push sjsj1123/docker-backend
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: docker-fullstack-app
+          environment_name: Docker-fullstack-app-env
+          existing_bucket_name: elasticbeanstalk-ap-northeast-2-872515267023
+          region: ap-northeast-2
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip

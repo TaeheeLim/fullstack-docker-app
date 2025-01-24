@@ -1,0 +1,35 @@
+services:
+  frontend:
+    image: sjsj1123/docker-frontend
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app
+    stdin_open: true
+    mem_limit: 128m
+    networks:
+      - app_network
+  nginx:
+    restart: always
+    image: sjsj1123/docker-nginx
+    ports:
+      - "80:80"
+    mem_limit: 128m
+    networks:
+      - app_network
+  backend:
+    image: sjsj1123/docker-backend
+    networks:
+      - app_network
+    container_name : app_backend
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+    environment:
+      MYSQL_HOST: docker-fullstack-mysql.c9u0smm6c0vb.ap-northeast-2.rds.amazonaws.com
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD:  mf4158kl00
+      MYSQL_DATABASE: myapp
+      MYSQL_PORT: 3306
+    mem_limit: 128m
+networks:
+  app_network:
