@@ -3,6 +3,8 @@ jobs:
     runs-on:  ubuntu-latest
     steps:
       - uses: actions/chekcout@v3
+
+      - run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USER_ID }}" --password-stdin
       - run: docker build -t sjsj1123/docker-frontend ./frontend
       - run: docker build -t sjsj1123/docker-nginx ./nginx
       - run: docker build -t sjsj1123/docker-backend ./backend
@@ -19,8 +21,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: docker-fullstack-app
-          environment_name: Docker-fullstack-app-env
+          application_name: fullstack-docker-app
+          environment_name: Fullstack-docker-app-env
           existing_bucket_name: elasticbeanstalk-ap-northeast-2-872515267023
           region: ap-northeast-2
           version_label: ${{ github.sha }}
